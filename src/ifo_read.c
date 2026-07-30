@@ -3245,7 +3245,7 @@ static int ifoRead_PGCIT_internal(ifo_handle_t *ifofile, pgcit_t *pgcit,
   if(!data)
     return 0;
 
-  if(info_length && !(DVDReadBytes(ifop->file, data, info_length))) {
+  if(!(DVDReadBytes(ifop->file, data, info_length))) {
     free(data);
     return 0;
   }
