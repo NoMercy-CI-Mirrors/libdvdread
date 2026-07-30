@@ -2363,7 +2363,7 @@ int ifoRead_TT_SRPT(ifo_handle_t *ifofile) {
   struct ifo_handle_private_s *ifop = PRIV(ifofile);
   tt_srpt_t *tt_srpt;
   unsigned int i;
-  size_t info_length;
+  size_t info_length = 0;
 
   if(!ifofile)
     return 0;
@@ -2396,7 +2396,8 @@ int ifoRead_TT_SRPT(ifo_handle_t *ifofile) {
   if(tt_srpt->last_byte == 0) {
     tt_srpt->last_byte = tt_srpt->nr_of_srpts * sizeof(title_info_t) - 1 + TT_SRPT_SIZE;
   }
-  info_length = tt_srpt->last_byte + 1 - TT_SRPT_SIZE;
+  if(tt_srpt->last_byte >= TT_SRPT_SIZE - 1)
+    info_length = tt_srpt->last_byte + 1 - TT_SRPT_SIZE;
 
   tt_srpt->title = calloc(1, info_length);
   if(!tt_srpt->title) {
@@ -2476,7 +2477,7 @@ void ifoFree_TT_SRPT(ifo_handle_t *ifofile) {
 int ifoRead_VTS_PTT_SRPT(ifo_handle_t *ifofile) {
   struct ifo_handle_private_s *ifop = PRIV(ifofile);
   vts_ptt_srpt_t *vts_ptt_srpt = NULL;
-  int info_length, i, j;
+  int info_length = 0, i, j;
   uint32_t *data = NULL;
 
   if(!ifofile)
@@ -2515,7 +2516,8 @@ int ifoRead_VTS_PTT_SRPT(ifo_handle_t *ifofile) {
   if(vts_ptt_srpt->last_byte == 0) {
     vts_ptt_srpt->last_byte  = vts_ptt_srpt->nr_of_srpts * sizeof(*data) - 1 + VTS_PTT_SRPT_SIZE;
   }
-  info_length = vts_ptt_srpt->last_byte + 1 - VTS_PTT_SRPT_SIZE;
+  if(vts_ptt_srpt->last_byte >= VTS_PTT_SRPT_SIZE - 1)
+    info_length = vts_ptt_srpt->last_byte + 1 - VTS_PTT_SRPT_SIZE;
   data = calloc(1, info_length);
   if(!data)
     goto fail;
@@ -3117,7 +3119,7 @@ static int ifoRead_VOBU_ADMAP_internal(ifo_handle_t *ifofile,
                                        unsigned int sector) {
   struct ifo_handle_private_s *ifop = PRIV(ifofile);
   unsigned int i;
-  int info_length;
+  size_t info_length = 0;
 
   if(!DVDFileSeekForce_(ifop->file, sector * DVD_BLOCK_LEN, sector))
     return 0;
@@ -3127,7 +3129,8 @@ static int ifoRead_VOBU_ADMAP_internal(ifo_handle_t *ifofile,
 
   B2N_32(vobu_admap->last_byte);
 
-  info_length = vobu_admap->last_byte + 1 - VOBU_ADMAP_SIZE;
+  if(vobu_admap->last_byte >= VOBU_ADMAP_SIZE - 1)
+    info_length = vobu_admap->last_byte + 1 - VOBU_ADMAP_SIZE;
   /* assert(info_length > 0);
      Magic Knight Rayearth Daybreak is mastered very strange and has
      Titles with a VOBS that has no VOBUs. */
