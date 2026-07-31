@@ -987,14 +987,14 @@ static int findDVDFile( dvd_reader_t *dvd, const char *file, char *filename )
     int i;
 
     /* Try also with adding the path, just in case. */
-    sprintf( video_path, "%s/%s/", dvd->rd->path_root, subdir );
+    snprintf( video_path, sizeof(video_path), "%s/%s/", dvd->rd->path_root, subdir );
     ret = findDirFile( dvd, video_path, nodirfile, filename );
     if( ret < 0 ) {
       /* Try with the path, but in lower case. */
       for( i = 0; subdir[ i ]; i++ )
         lower[ i ] = tolower( (unsigned char)subdir[ i ] );
       lower[ i ] = '\0';
-      sprintf( video_path, "%s/%s/", dvd->rd->path_root, lower );
+      snprintf( video_path, sizeof(video_path), "%s/%s/", dvd->rd->path_root, lower );
       ret = findDirFile( dvd, video_path, nodirfile, filename );
       if( ret < 0 ) {
         return 0;
