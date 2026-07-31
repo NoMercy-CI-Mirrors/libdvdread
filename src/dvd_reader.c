@@ -1278,7 +1278,7 @@ static dvd_file_t *DVDOpenVOBPath( dvd_reader_t *ctx, int title, int menu,
 
         /* the zone directory matters when opening a title set of the other
          * zone of a hybrid disc */
-        sprintf( filename, "/%s_TS/%cTS_%02i_%i.%cOB", DVD_TYPE_STRING( ts_type ),
+        sprintf( filename, "/%s_TS/%cTS_%02d_%d.%cOB", DVD_TYPE_STRING( ts_type ),
                 STREAM_TYPE_STRING( ts_type ), title, i + 1 , STREAM_TYPE_STRING( ts_type ));
         if( !findDVDFile( ctx, filename, full_path ) ) {
           break;
