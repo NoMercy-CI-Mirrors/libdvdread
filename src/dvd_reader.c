@@ -862,11 +862,11 @@ void DVDClose( dvd_reader_t *dvd )
  * disc is not always the zone implied by the disc type. */
 static dvd_type_t DVDFileZone( dvd_reader_t *ctx, const char *filename )
 {
-  if( !strncmp( filename, "/VIDEO_TS/", 10 ) )
+  if( !strncasecmp( filename, "/VIDEO_TS/", 10 ) )
     return DVD_V;
-  if( !strncmp( filename, "/AUDIO_TS/", 10 ) )
+  if( !strncasecmp( filename, "/AUDIO_TS/", 10 ) )
     return DVD_A;
-  if( !strncmp( filename, "/DVD_RTAV/", 10 ) )
+  if( !strncasecmp( filename, "/DVD_RTAV/", 10 ) )
     return DVD_VR;
   return ctx->dvd_type;
 }
