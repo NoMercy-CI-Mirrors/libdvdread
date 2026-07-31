@@ -1678,6 +1678,8 @@ int DVDFileStat( dvd_reader_t *reader, int titlenum,
     if( ret < 0 && reader->dvd_type == DVD_A ) {
       int vts = DVDAudioLinkedVTS( reader, titlenum );
       if( vts > 0 ) {
+        Log2( reader, "ATS %02d has no AOBs, using the title VOBs of VTS %02d",
+              titlenum, vts );
         if( dvd->isImageFile )
           ret = DVDFileStatVOBUDF( reader, vts, 0, DVD_V, statbuf );
         else
