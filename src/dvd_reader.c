@@ -2017,7 +2017,7 @@ int DVDDiscID( dvd_reader_t *dvd, unsigned char *discid )
 
   /* Check arguments. */
   if( dvd == NULL || discid == NULL )
-    return 0;
+    return -1;
 
   vmg_ifo = ifoOpen( dvd, 0 );
   if( !vmg_ifo ) {
@@ -2066,9 +2066,10 @@ int DVDDiscID( dvd_reader_t *dvd, unsigned char *discid )
     }
   }
   EndMD5( &ctx );
-  memcpy( discid, ctx.buf, 16 );
   if(!nr_of_files)
     return -1;
+
+  memcpy( discid, ctx.buf, 16 );
 
   return 0;
 }
