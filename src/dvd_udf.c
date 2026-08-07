@@ -819,8 +819,8 @@ static int UDFFindPartition( dvd_reader_t *ctx, int partnum,
 
     if( ( !part->valid) || ( !volvalid ) ) {
       /* Backup volume descriptor */
-      MVDS_location = avdp.mvds.location;
-      MVDS_length = avdp.mvds.length;
+      MVDS_location = avdp.rvds.location;
+      MVDS_length = avdp.rvds.length;
     }
   } while( i-- && ( ( !part->valid ) || ( !volvalid ) ) );
 
