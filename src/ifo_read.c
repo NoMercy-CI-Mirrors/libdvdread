@@ -2582,12 +2582,12 @@ int ifoRead_VTS_PTT_SRPT(ifo_handle_t *ifofile) {
       goto fail;
     }
     for(j = 0; j < vts_ptt_srpt->title[i].nr_of_ptts; j++) {
+      const char *entry = (const char *)data + data[i] + 4*j - VTS_PTT_SRPT_SIZE;
+
       /* The assert placed here because of Magic Knight Rayearth Daybreak */
       CHECK_VALUE(data[i] + sizeof(ptt_info_t) <= vts_ptt_srpt->last_byte + 1);
-      vts_ptt_srpt->title[i].ptt[j].pgcn
-        = *(uint16_t*)(((char *)data) + data[i] + 4*j - VTS_PTT_SRPT_SIZE);
-      vts_ptt_srpt->title[i].ptt[j].pgn
-        = *(uint16_t*)(((char *)data) + data[i] + 4*j + 2 - VTS_PTT_SRPT_SIZE);
+      memcpy(&vts_ptt_srpt->title[i].ptt[j].pgcn, entry, 2);
+      memcpy(&vts_ptt_srpt->title[i].ptt[j].pgn, entry + 2, 2);
     }
   }
 
