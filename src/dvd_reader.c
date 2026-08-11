@@ -1053,19 +1053,9 @@ static uint8_t *cppm_get_mkb_or_backup( dvd_reader_t *ctx, int backup )
 {
   uint8_t* p_mkb;
   dvd_file_t* mkb_file;
-  char filename[ MAX_UDF_FILE_NAME_LEN ];
+  const char *filename = backup ? "/AUDIO_TS/DVDAUDIO.BUP" : "/AUDIO_TS/DVDAUDIO.MKB";
 
   dvd_reader_device_t *dvd = ctx->rd;
-  switch( backup )
-  {
-    case 0:
-      strcpy( filename,  "/AUDIO_TS/DVDAUDIO.MKB" );
-      break;
-    case 1:
-      strcpy( filename,  "/AUDIO_TS/DVDAUDIO.BUP" );
-      break;
-  }
-
   uint32_t len; 
 
   /* exits early if there is no MKB file */
