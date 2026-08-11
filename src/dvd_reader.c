@@ -1115,7 +1115,7 @@ static dvd_file_t *DVDOpenVOBUDF( dvd_reader_t *ctx, int title, int menu,
     return NULL;
 
   if ( ts_type == DVD_VR ) {
-    sprintf( filename, "/DVD_RTAV/VR_MOVIE.VRO" );
+    strcpy( filename, "/DVD_RTAV/VR_MOVIE.VRO" );
   } else if( title == 0 ) {
     sprintf( filename, "/%s_TS/%s_TS.VOB", DVD_TYPE_STRING( ts_type ), DVD_TYPE_STRING( ts_type ) );
   } else if(!menu) {
@@ -1128,7 +1128,7 @@ static dvd_file_t *DVDOpenVOBUDF( dvd_reader_t *ctx, int title, int menu,
       sprintf( filename, "/VIDEO_TS/VTS_%02d_0.VOB", title );
     else if ( ts_type == DVD_A )
       /* DVD_Audio title menu */
-      sprintf( filename, "/AUDIO_TS/AUDIO_SV.VOB" );
+      strcpy( filename, "/AUDIO_TS/AUDIO_SV.VOB" );
   }
 
   start = UDFFindFile( ctx, filename, &len );
@@ -1211,7 +1211,7 @@ static dvd_file_t *DVDOpenVOBPath( dvd_reader_t *ctx, int title, int menu,
         sprintf( filename, "VTS_%02i_0.VOB", title );
       else
         /* Remaining title menus would be in the still videos VOB */
-        sprintf( filename, "AUDIO_SV.VOB" );
+        strcpy( filename, "AUDIO_SV.VOB" );
     }
     if( !findDVDFile( ctx, filename, full_path ) ) {
       free( dvd_file );
@@ -1241,7 +1241,7 @@ static dvd_file_t *DVDOpenVOBPath( dvd_reader_t *ctx, int title, int menu,
     /* DVD-VR uses UDF 2.0 which allows for larger file sizes, 1GB limit does not exist */
     /* will only return one file, treating it as a single fragment with one title dev */
     if ( ts_type == DVD_VR ) {
-      sprintf( filename, "VR_MOVIE.VRO");
+      strcpy( filename, "VR_MOVIE.VRO");
 
       if( !findDVDFile( ctx, filename, full_path ) ) {
         free( dvd_file );
@@ -1393,7 +1393,7 @@ dvd_file_t *DVDOpenFile( dvd_reader_t *ctx, int titlenum,
   switch( domain ) {
   case DVD_READ_INFO_FILE:
     if ( ctx->dvd_type == DVD_VR )
-      sprintf( filename, "/DVD_RTAV/VR_MANGR.IFO" );
+      strcpy( filename, "/DVD_RTAV/VR_MANGR.IFO" );
     else if( titlenum == 0 ) {
       sprintf( filename, "/%s_TS/%s_TS.IFO", DVD_TYPE_STRING( ctx->dvd_type ),
               DVD_TYPE_STRING( ctx->dvd_type ) );
@@ -1405,7 +1405,7 @@ dvd_file_t *DVDOpenFile( dvd_reader_t *ctx, int titlenum,
     break;
   case DVD_READ_INFO_BACKUP_FILE:
     if ( ctx->dvd_type == DVD_VR )
-      sprintf( filename, "/DVD_RTAV/VR_MANGR.BUP" );
+      strcpy( filename, "/DVD_RTAV/VR_MANGR.BUP" );
     else if( titlenum == 0 ) {
       sprintf( filename,  "/%s_TS/%s_TS.BUP", DVD_TYPE_STRING( ctx->dvd_type ),
               DVD_TYPE_STRING( ctx->dvd_type ) );
