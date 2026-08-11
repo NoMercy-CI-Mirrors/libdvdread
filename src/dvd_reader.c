@@ -1075,8 +1075,9 @@ static uint8_t *cppm_get_mkb_or_backup( dvd_reader_t *ctx, int backup )
     mkb_file= DVDOpenFileUDF( ctx, filename, 0 );
   } else
   {
-    if( !findDVDFile( ctx, filename, filename ) ) return NULL;
-    mkb_file= DVDOpenFilePath( ctx, filename );
+    char full_path[ PATH_MAX + 1 ];
+    if( !findDVDFile( ctx, filename, full_path ) ) return NULL;
+    mkb_file= DVDOpenFilePath( ctx, full_path );
   }
 
   if ( !mkb_file )
