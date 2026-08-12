@@ -37,13 +37,9 @@ int dvdread_getbits_init(getbits_state_t *state, const uint8_t *start) {
 
 /* Non-optimized getbits. */
 /* This can easily be optimized for particular platforms. */
-uint32_t dvdread_getbits(getbits_state_t *state, uint32_t number_of_bits) {
+uint32_t (dvdread_getbits)(getbits_state_t *state, uint32_t number_of_bits) {
   uint32_t result=0;
   uint8_t byte=0;
-  if (number_of_bits > 32) {
-    printf("Number of bits > 32 in getbits\n");
-    abort();
-  }
 
   if ((state->bit_position) > 0) {  /* Last getbits left us in the middle of a byte. */
     if (number_of_bits > (8-state->bit_position)) { /* this getbits will span 2 or more bytes. */
