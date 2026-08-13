@@ -43,7 +43,7 @@ uint32_t dvdread_getbits_toomany( getbits_state_t *, size_t );
 
 // check the constant values are not bigger than 32 bits
 # define dvdread_getbits(s,b) \
-  ((!__builtin_constant_p(b) || b <= 32) ? (dvdread_getbits)(s,b) : dvdread_getbits_toomany(s, b))
+  ((!__builtin_constant_p(b) || (b <= 32 && b > 0)) ? (dvdread_getbits)(s,b) : dvdread_getbits_toomany(s, b))
 
 #endif
 
