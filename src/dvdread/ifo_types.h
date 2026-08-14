@@ -563,6 +563,30 @@ typedef struct {
  */
 
 /**
+ * The album menu
+ *
+ * The menu pages are program chains in the table at amgm_pgci_ut_sa and their
+ * video sits in AUDIO_TS.VOB. A page addresses its cells from the start of
+ * that file, and the first sector of a cell holds the nav pack with the
+ * buttons, as on a DVD-Video menu.
+ *
+ * The top menu is the page with entry id 0x82. The rest carry no entry id and
+ * are reached only through buttons. A button plays a track, or moves to
+ * another page, the first page, or the page before or after.
+ *
+ * A page may name the button it starts on. When it does not, most players
+ * return to the button last left selected there.
+ *
+ * A top or playlist page only shows while nothing is playing. A page may
+ * instead be marked active and keep its buttons working while a track plays,
+ * and its track buttons then reach only that track's group. A page backed by
+ * video cannot be active, may loop, and shows its buttons late.
+ *
+ * The page names come from the text data manager at txtdt_mgi_sa when the
+ * disc has one.
+ */
+
+/**
  * Audio Manager Information Management Table.
  */
 typedef struct {
@@ -576,7 +600,8 @@ typedef struct {
   uint16_t amg_this_volume_nr;
   uint8_t  disc_side;
   uint8_t  zero_3[4];
-  uint8_t  autoplay;
+  uint8_t  autoplay;        /* when zero the player shows the top menu once the
+                               disc is in, otherwise it starts the first track */
   uint32_t audio_sv_ifo_relative_p;
   uint16_t unknown_1; /* some discs have a value here, undocumented in DVD-Audio specs */
   uint8_t  zero_4[8];
