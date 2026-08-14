@@ -65,7 +65,7 @@ CHECK_NAV_STRUCT_SIZE(dsi_t,        1017);
                 __FILE__, __LINE__, # arg );\
   }
 
-static void read_hli(pci_t *pci, unsigned char *buffer);
+static void read_hli(hli_t *hli, unsigned char *buffer);
 
 void navRead_PCI(pci_t *pci, unsigned char *buffer) {
   int32_t i;
@@ -124,7 +124,7 @@ void navRead_PCI(pci_t *pci, unsigned char *buffer) {
   for(i = 0; i < 9; i++)
     pci->nsml_agli.nsml_agl_dsta[i] = getbits(&state, 32 );
 
-  read_hli(pci, buffer + 96);
+  read_hli(&pci->hli, buffer + 96);
 
 #ifndef NDEBUG
   CHECK_VALUE(pci->pci_gi.zero1 == 0);
@@ -134,65 +134,65 @@ void navRead_PCI(pci_t *pci, unsigned char *buffer) {
 /* the still picture NAV packet, substream 0x02, has no PCI general information */
 void navRead_ASV_PCI(pci_t *pci, unsigned char *buffer) {
   memset(pci, 0, sizeof(*pci));
-  read_hli(pci, buffer);
+  read_hli(&pci->hli, buffer);
 }
 
-static void read_hli(pci_t *pci, unsigned char *buffer) {
+static void read_hli(hli_t *hli, unsigned char *buffer) {
   int32_t i, j;
   getbits_state_t state;
   if (!getbits_init(&state, buffer)) abort();
 
   /* pci hli hli_gi */
-  pci->hli.hl_gi.hli_ss = getbits(&state, 16 );
-  pci->hli.hl_gi.hli_s_ptm = getbits(&state, 32 );
-  pci->hli.hl_gi.hli_e_ptm = getbits(&state, 32 );
-  pci->hli.hl_gi.btn_se_e_ptm = getbits(&state, 32 );
-  pci->hli.hl_gi.zero1 = getbits(&state, 2 );
-  pci->hli.hl_gi.btngr_ns = getbits(&state, 2 );
-  pci->hli.hl_gi.zero2 = getbits(&state, 1 );
-  pci->hli.hl_gi.btngr1_dsp_ty = getbits(&state, 3 );
-  pci->hli.hl_gi.zero3 = getbits(&state, 1 );
-  pci->hli.hl_gi.btngr2_dsp_ty = getbits(&state, 3 );
-  pci->hli.hl_gi.zero4 = getbits(&state, 1 );
-  pci->hli.hl_gi.btngr3_dsp_ty = getbits(&state, 3 );
-  pci->hli.hl_gi.btn_ofn = getbits(&state, 8 );
-  pci->hli.hl_gi.btn_ns = getbits(&state, 8 );
-  pci->hli.hl_gi.nsl_btn_ns = getbits(&state, 8 );
-  pci->hli.hl_gi.zero5 = getbits(&state, 8 );
-  pci->hli.hl_gi.fosl_btnn = getbits(&state, 8 );
-  pci->hli.hl_gi.foac_btnn = getbits(&state, 8 );
+  hli->hl_gi.hli_ss = getbits(&state, 16 );
+  hli->hl_gi.hli_s_ptm = getbits(&state, 32 );
+  hli->hl_gi.hli_e_ptm = getbits(&state, 32 );
+  hli->hl_gi.btn_se_e_ptm = getbits(&state, 32 );
+  hli->hl_gi.zero1 = getbits(&state, 2 );
+  hli->hl_gi.btngr_ns = getbits(&state, 2 );
+  hli->hl_gi.zero2 = getbits(&state, 1 );
+  hli->hl_gi.btngr1_dsp_ty = getbits(&state, 3 );
+  hli->hl_gi.zero3 = getbits(&state, 1 );
+  hli->hl_gi.btngr2_dsp_ty = getbits(&state, 3 );
+  hli->hl_gi.zero4 = getbits(&state, 1 );
+  hli->hl_gi.btngr3_dsp_ty = getbits(&state, 3 );
+  hli->hl_gi.btn_ofn = getbits(&state, 8 );
+  hli->hl_gi.btn_ns = getbits(&state, 8 );
+  hli->hl_gi.nsl_btn_ns = getbits(&state, 8 );
+  hli->hl_gi.zero5 = getbits(&state, 8 );
+  hli->hl_gi.fosl_btnn = getbits(&state, 8 );
+  hli->hl_gi.foac_btnn = getbits(&state, 8 );
 
   /* pci hli btn_colit */
   for(i = 0; i < 3; i++)
     for(j = 0; j < 2; j++)
-      pci->hli.btn_colit.btn_coli[i][j] = getbits(&state, 32 );
+      hli->btn_colit.btn_coli[i][j] = getbits(&state, 32 );
 
   /* NOTE: I've had to change the structure from the disk layout to get
    * the packing to work with Sun's Forte C compiler. */
 
   /* pci hli btni */
   for(i = 0; i < 36; i++) {
-    pci->hli.btnit[i].btn_coln = getbits(&state, 2 );
-    pci->hli.btnit[i].x_start = getbits(&state, 10 );
-    pci->hli.btnit[i].zero1 = getbits(&state, 2 );
-    pci->hli.btnit[i].x_end = getbits(&state, 10 );
+    hli->btnit[i].btn_coln = getbits(&state, 2 );
+    hli->btnit[i].x_start = getbits(&state, 10 );
+    hli->btnit[i].zero1 = getbits(&state, 2 );
+    hli->btnit[i].x_end = getbits(&state, 10 );
 
-    pci->hli.btnit[i].auto_action_mode = getbits(&state, 2 );
-    pci->hli.btnit[i].y_start = getbits(&state, 10 );
-    pci->hli.btnit[i].zero2 = getbits(&state, 2 );
-    pci->hli.btnit[i].y_end = getbits(&state, 10 );
+    hli->btnit[i].auto_action_mode = getbits(&state, 2 );
+    hli->btnit[i].y_start = getbits(&state, 10 );
+    hli->btnit[i].zero2 = getbits(&state, 2 );
+    hli->btnit[i].y_end = getbits(&state, 10 );
 
-    pci->hli.btnit[i].zero3 = getbits(&state, 2 );
-    pci->hli.btnit[i].up = getbits(&state, 6 );
-    pci->hli.btnit[i].zero4 = getbits(&state, 2 );
-    pci->hli.btnit[i].down = getbits(&state, 6 );
-    pci->hli.btnit[i].zero5 = getbits(&state, 2 );
-    pci->hli.btnit[i].left = getbits(&state, 6 );
-    pci->hli.btnit[i].zero6 = getbits(&state, 2 );
-    pci->hli.btnit[i].right = getbits(&state, 6 );
+    hli->btnit[i].zero3 = getbits(&state, 2 );
+    hli->btnit[i].up = getbits(&state, 6 );
+    hli->btnit[i].zero4 = getbits(&state, 2 );
+    hli->btnit[i].down = getbits(&state, 6 );
+    hli->btnit[i].zero5 = getbits(&state, 2 );
+    hli->btnit[i].left = getbits(&state, 6 );
+    hli->btnit[i].zero6 = getbits(&state, 2 );
+    hli->btnit[i].right = getbits(&state, 6 );
     /* pci vm_cmd */
     for(j = 0; j < 8; j++)
-      pci->hli.btnit[i].cmd.bytes[j] = getbits(&state, 8 );
+      hli->btnit[i].cmd.bytes[j] = getbits(&state, 8 );
   }
 
 
@@ -200,54 +200,54 @@ static void read_hli(pci_t *pci, unsigned char *buffer) {
   /* Asserts */
 
   /* pci hli hli_gi */
-  CHECK_VALUE(pci->hli.hl_gi.zero1 == 0);
-  CHECK_VALUE(pci->hli.hl_gi.zero2 == 0);
-  CHECK_VALUE(pci->hli.hl_gi.zero3 == 0);
-  CHECK_VALUE(pci->hli.hl_gi.zero4 == 0);
-  CHECK_VALUE(pci->hli.hl_gi.zero5 == 0);
+  CHECK_VALUE(hli->hl_gi.zero1 == 0);
+  CHECK_VALUE(hli->hl_gi.zero2 == 0);
+  CHECK_VALUE(hli->hl_gi.zero3 == 0);
+  CHECK_VALUE(hli->hl_gi.zero4 == 0);
+  CHECK_VALUE(hli->hl_gi.zero5 == 0);
 
   /* Are there buttons defined here? */
-  if((pci->hli.hl_gi.hli_ss & 0x03) != 0) {
-    CHECK_VALUE(pci->hli.hl_gi.btn_ns != 0);
-    CHECK_VALUE(pci->hli.hl_gi.btngr_ns != 0);
+  if((hli->hl_gi.hli_ss & 0x03) != 0) {
+    CHECK_VALUE(hli->hl_gi.btn_ns != 0);
+    CHECK_VALUE(hli->hl_gi.btngr_ns != 0);
   } else {
-    CHECK_VALUE((pci->hli.hl_gi.btn_ns != 0 && pci->hli.hl_gi.btngr_ns != 0)
-                || (pci->hli.hl_gi.btn_ns == 0 && pci->hli.hl_gi.btngr_ns == 0));
+    CHECK_VALUE((hli->hl_gi.btn_ns != 0 && hli->hl_gi.btngr_ns != 0)
+                || (hli->hl_gi.btn_ns == 0 && hli->hl_gi.btngr_ns == 0));
   }
 
   /* pci hli btnit */
-  for(i = 0; i < pci->hli.hl_gi.btngr_ns; i++) {
-    for(j = 0; j < (36 / pci->hli.hl_gi.btngr_ns); j++) {
-      int n = (36 / pci->hli.hl_gi.btngr_ns) * i + j;
-      CHECK_VALUE(pci->hli.btnit[n].zero1 == 0);
-      CHECK_VALUE(pci->hli.btnit[n].zero2 == 0);
-      CHECK_VALUE(pci->hli.btnit[n].zero3 == 0);
-      CHECK_VALUE(pci->hli.btnit[n].zero4 == 0);
-      CHECK_VALUE(pci->hli.btnit[n].zero5 == 0);
-      CHECK_VALUE(pci->hli.btnit[n].zero6 == 0);
+  for(i = 0; i < hli->hl_gi.btngr_ns; i++) {
+    for(j = 0; j < (36 / hli->hl_gi.btngr_ns); j++) {
+      int n = (36 / hli->hl_gi.btngr_ns) * i + j;
+      CHECK_VALUE(hli->btnit[n].zero1 == 0);
+      CHECK_VALUE(hli->btnit[n].zero2 == 0);
+      CHECK_VALUE(hli->btnit[n].zero3 == 0);
+      CHECK_VALUE(hli->btnit[n].zero4 == 0);
+      CHECK_VALUE(hli->btnit[n].zero5 == 0);
+      CHECK_VALUE(hli->btnit[n].zero6 == 0);
 
-      if (j < pci->hli.hl_gi.btn_ns) {
-        CHECK_VALUE(pci->hli.btnit[n].x_start <= pci->hli.btnit[n].x_end);
-        CHECK_VALUE(pci->hli.btnit[n].y_start <= pci->hli.btnit[n].y_end);
-        CHECK_VALUE(pci->hli.btnit[n].up <= pci->hli.hl_gi.btn_ns);
-        CHECK_VALUE(pci->hli.btnit[n].down <= pci->hli.hl_gi.btn_ns);
-        CHECK_VALUE(pci->hli.btnit[n].left <= pci->hli.hl_gi.btn_ns);
-        CHECK_VALUE(pci->hli.btnit[n].right <= pci->hli.hl_gi.btn_ns);
-        /* vmcmd_verify(pci->hli.btnit[n].cmd); */
+      if (j < hli->hl_gi.btn_ns) {
+        CHECK_VALUE(hli->btnit[n].x_start <= hli->btnit[n].x_end);
+        CHECK_VALUE(hli->btnit[n].y_start <= hli->btnit[n].y_end);
+        CHECK_VALUE(hli->btnit[n].up <= hli->hl_gi.btn_ns);
+        CHECK_VALUE(hli->btnit[n].down <= hli->hl_gi.btn_ns);
+        CHECK_VALUE(hli->btnit[n].left <= hli->hl_gi.btn_ns);
+        CHECK_VALUE(hli->btnit[n].right <= hli->hl_gi.btn_ns);
+        /* vmcmd_verify(hli->btnit[n].cmd); */
       } else {
         int k;
-        CHECK_VALUE(pci->hli.btnit[n].btn_coln == 0);
-        CHECK_VALUE(pci->hli.btnit[n].auto_action_mode == 0);
-        CHECK_VALUE(pci->hli.btnit[n].x_start == 0);
-        CHECK_VALUE(pci->hli.btnit[n].y_start == 0);
-        CHECK_VALUE(pci->hli.btnit[n].x_end == 0);
-        CHECK_VALUE(pci->hli.btnit[n].y_end == 0);
-        CHECK_VALUE(pci->hli.btnit[n].up == 0);
-        CHECK_VALUE(pci->hli.btnit[n].down == 0);
-        CHECK_VALUE(pci->hli.btnit[n].left == 0);
-        CHECK_VALUE(pci->hli.btnit[n].right == 0);
+        CHECK_VALUE(hli->btnit[n].btn_coln == 0);
+        CHECK_VALUE(hli->btnit[n].auto_action_mode == 0);
+        CHECK_VALUE(hli->btnit[n].x_start == 0);
+        CHECK_VALUE(hli->btnit[n].y_start == 0);
+        CHECK_VALUE(hli->btnit[n].x_end == 0);
+        CHECK_VALUE(hli->btnit[n].y_end == 0);
+        CHECK_VALUE(hli->btnit[n].up == 0);
+        CHECK_VALUE(hli->btnit[n].down == 0);
+        CHECK_VALUE(hli->btnit[n].left == 0);
+        CHECK_VALUE(hli->btnit[n].right == 0);
         for (k = 0; k < 8; k++)
-          CHECK_VALUE(pci->hli.btnit[n].cmd.bytes[k] == 0); /* CHECK_ZERO? */
+          CHECK_VALUE(hli->btnit[n].cmd.bytes[k] == 0); /* CHECK_ZERO? */
       }
     }
   }
