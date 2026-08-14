@@ -52,7 +52,8 @@ DVDREAD_API void navRead_ASV_PCI(pci_t *, unsigned char *);
  * Reads the DSI packet data pointed to into dsi struct.
  *
  * @param dsi Pointer to the DSI data structure to be filled in.
- * @param buffer Pointer to the buffer of the on disc DSI data.
+ * @param buffer Pointer to the buffer of the on disc DSI data
+ *               containing at least 674 bytes.
  */
 DVDREAD_API void navRead_DSI(dsi_t *, unsigned char *);
 
