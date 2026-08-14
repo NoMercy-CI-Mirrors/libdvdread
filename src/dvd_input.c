@@ -109,6 +109,8 @@ struct dvd_input_s {
   /* DVD_VR -> VRO with cprm */
   dvd_type_t stream_type;
 
+  int cpxm_ready;
+
   /* stream input */
   dvd_reader_stream_cb *stream_cb;
   /* file input */
@@ -125,6 +127,7 @@ static dvd_input_t dvd_input_New(void *priv, dvd_logger_cb *logcb)
       dev->logcb = logcb;
       dev->ipos = 0;
       dev->stream_type = DVD_V;
+      dev->cpxm_ready = 0;
 
       /* Initialize all inputs to safe defaults */
       dev->dvdcss = NULL;
@@ -203,7 +206,8 @@ static int css_title(dvd_input_t dev, int block)
 static int css_read(dvd_input_t dev, void *buffer, int blocks, int flags)
 {
 #ifdef HAVE_DVDCSS_DVDCPXM_H
-  if (dev->stream_type == DVD_A || dev->stream_type == DVD_VR)
+  if ((dev->stream_type == DVD_A || dev->stream_type == DVD_VR) &&
+      dev->cpxm_ready)
     return DVDcpxm_read(dev->dvdcss, buffer, blocks, flags);
   else
 #endif
@@ -230,7 +234,11 @@ static int css_close(dvd_input_t dev)
  */
 static int cpxm_init(dvd_input_t dev, uint8_t* p_mkb )
 {
-  return DVDcpxm_init(dev->dvdcss, p_mkb);
+  int ret = DVDcpxm_init(dev->dvdcss, p_mkb);
+
+  dev->cpxm_ready = ret >= 0;
+
+  return ret;
 }
 #endif /* CPXM */
 
