@@ -160,7 +160,11 @@ DVDREAD_API dvd_reader_t *DVDOpenStream( void *, dvd_reader_stream_cb * );
 DVDREAD_API dvd_reader_t *DVDOpen2( void *, const dvd_logger_cb *, const char *);
 DVDREAD_API dvd_reader_t *DVDOpenStream2( void *, const dvd_logger_cb *, dvd_reader_stream_cb *);
 
-/* in the case the the type was autodetected, can check with dvd->dvd_type */
+/* The calls above pick the type from the disc. A disc holding only an audio
+ * zone opens as DVD-Audio, but a disc holding both zones opens as DVD-Video.
+ * Use the call below to reach the audio zone of such a disc. The chosen type
+ * is not readable back from the handle, open an IFO and read ifo_format */
+
 /* To explicitly open the disc as DVD-Audio */
 DVDREAD_API dvd_reader_t *DVDOpenAudio( void *, const dvd_logger_cb *, const char *);
 DVDREAD_API dvd_reader_t *DVDOpenStreamAudio( void *, const dvd_logger_cb *, dvd_reader_stream_cb *);
@@ -204,13 +208,22 @@ DVDREAD_API void DVDClose( dvd_reader_t * );
 typedef enum {
   DVD_READ_INFO_FILE,        /**< VIDEO_TS.IFO  or VTS_XX_0.IFO (title) */
   DVD_READ_INFO_BACKUP_FILE, /**< VIDEO_TS.BUP  or VTS_XX_0.BUP (title) */
-  DVD_READ_MENU_VOBS,        /**< VIDEO_TS.VOB  or VTS_XX_0.VOB (title) */
+  DVD_READ_MENU_VOBS,        /**< VIDEO_TS.VOB  or VTS_XX_0.VOB (title).
+                                  A DVD-Audio disc has only two menu files.
+                                  Title 0 gives AUDIO_TS.VOB, holding the
+                                  album menu pages, and any other title gives
+                                  AUDIO_SV.VOB, holding the stills shown
+                                  while a track plays. */
   DVD_READ_TITLE_VOBS,        /**< VTS_XX_[1-9].VOB (title).  All files in
                                   the title set are opened and read as a
-                                  single file. */
-  DVD_READ_SAMG_INFO,        /* for the AUDIO_PP.IFO */
-  DVD_READ_ASVS_INFO,        /* for the AUDIO_SV.IFO */
-  DVD_READ_ASVS_INFO_BACKUP, /* for the AUDIO_SV.BUP */
+                                  single file.
+                                  On a DVD-Audio disc this gives the AOB files
+                                  of the title set. A title set with no AOB
+                                  files of its own plays the video files of
+                                  the video title set it points at instead. */
+  DVD_READ_SAMG_INFO,        /**< AUDIO_PP.IFO, the simple audio manager */
+  DVD_READ_ASVS_INFO,        /**< AUDIO_SV.IFO, the still picture set */
+  DVD_READ_ASVS_INFO_BACKUP, /**< AUDIO_SV.BUP */
 } dvd_read_domain_t;
 
 /**
