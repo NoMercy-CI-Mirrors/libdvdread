@@ -3453,6 +3453,12 @@ int ifoRead_PGCI_UT(ifo_handle_t *ifofile) {
   if(!ifofile)
     return 0;
 
+  if(ifofile->ifo_format == IFO_AUDIO)
+    return ifoRead_AMGM_PGCI_UT(ifofile);
+
+  if(ifofile->ifo_format != IFO_VIDEO)
+    return 0;
+
   if(ifofile->vmgi_mat) {
     if(ifofile->vmgi_mat->vmgm_pgci_ut == 0)
       return 1;
@@ -3471,6 +3477,9 @@ int ifoRead_PGCI_UT(ifo_handle_t *ifofile) {
 static int ifoRead_AMGM_PGCI_UT(ifo_handle_t *ifofile) {
   if(!ifofile || !ifofile->amgi_mat)
     return 0;
+
+  if(ifofile->amgm_pgci_ut)
+    return 1;
 
   if(ifofile->amgi_mat->amgm_pgci_ut_sa == 0)
     return 1;
