@@ -880,7 +880,6 @@ static int ifoRead_VMG(ifo_handle_t *ifofile) {
     return 0;
 
   ifofile->vmgi_mat = vmgi_mat;
-  ifofile->ifo_format= IFO_VIDEO;
 
   if(!DVDFileSeek_(ifop->file, 0)) {
     free(ifofile->vmgi_mat);
