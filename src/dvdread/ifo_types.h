@@ -500,6 +500,21 @@ typedef struct {
 
 
 /**
+ * DVD-Audio
+ *
+ * A disc holds one album. An album holds up to nine groups and each group
+ * holds up to ninety nine tracks. A group is stored as one audio title set,
+ * an ATS_XX_0.IFO file and the AOB files beside it. A track is one audio
+ * program inside that title set.
+ *
+ * A track may carry extra track numbers called track points. A track point
+ * marks a time inside its parent track, the start of a lyric page for
+ * example, and shows as its own track number without splitting the audio.
+ * A title using them holds more cells than programs. A track point may also
+ * carry a still of its own, and then the track and all of its points do.
+ */
+
+/**
  * SAMG
  *
  * The following structures relate to the Simple Audio Manager, exclusive to DVD-Audio discs
