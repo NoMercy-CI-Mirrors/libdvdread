@@ -44,7 +44,8 @@ DVDREAD_API void navRead_PCI(pci_t *, unsigned char *);
  * Reads the still picture NAV PCI packet data pointed to into th pci struct.
  *
  * @param pci Pointer to the PCI data structure to be filled in.
- * @param buffer Pointer to the buffer of the on disc PCI data.
+ * @param buffer Pointer to the buffer of the on disc PCI data
+ *               containing at least 694 bytes.
  */
 DVDREAD_API void navRead_ASV_PCI(pci_t *, unsigned char *);
 
