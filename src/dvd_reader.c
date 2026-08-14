@@ -754,6 +754,26 @@ static dvd_type_t DVDProbeType( const char *ppath, void *stream,
     return ret;
   }
 
+  /* A directory tree has no UDF to read, so go by its layout instead. It has
+   * to be settled here because opening a directory as an image succeeds. */
+  if (ppath) {
+    dvdstat_t fileinfo;
+
+    if( ctx->fs->stat( ctx->fs, ppath, &fileinfo ) == 0 &&
+        ( fileinfo.st_mode & DVD_S_IFMT ) == DVD_S_IFDIR ) {
+      ctx->rd = DVDOpenPath( ppath );
+      if( ctx->rd ) {
+        if( disc_dir_has( ctx, "AUDIO_TS", "AUDIO_TS.IFO" ) &&
+            !disc_dir_has( ctx, "VIDEO_TS", "VIDEO_TS.IFO" ) )
+          ret = DVD_A;
+        else if( disc_dir_has( ctx, "DVD_RTAV", "VR_MANGR.IFO" ) )
+          ret = DVD_VR;
+      }
+      DVDClose( ctx );
+      return ret;
+    }
+  }
+
   have_css = dvdinput_setup( ctx, &ctx->logcb, DVD_V );
 
   if (stream && stream_cb)
