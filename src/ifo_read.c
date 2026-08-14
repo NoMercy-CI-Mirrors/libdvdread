@@ -3131,6 +3131,11 @@ static int ifoRead_VOBU_ADMAP_internal(ifo_handle_t *ifofile,
 
   if(vobu_admap->last_byte >= VOBU_ADMAP_SIZE - 1)
     info_length = vobu_admap->last_byte + 1 - VOBU_ADMAP_SIZE;
+  else {
+    Log0(ifop->ctx, "VOBU_ADMAP last_byte too small in %s:%i %" PRIu32,
+         __FILE__, __LINE__, vobu_admap->last_byte );
+    return 0;
+  }
   /* assert(info_length > 0);
      Magic Knight Rayearth Daybreak is mastered very strange and has
      Titles with a VOBS that has no VOBUs. */
