@@ -889,7 +889,8 @@ typedef struct {
   /* 8f 44khz, 0f 48khz, 1f 96khz, 2f 192khz*/
   /* otherwise if its 5.1 channels each nibble represents a channel group (G1, G2)*/
   uint8_t  sampling_frequency; 
-  /* 00 1 channel, 01 2 channels, 11 5.1 channels*/
+  /* the channel layout, not a count. 00 1 channel, 01 2 channels,
+   * 11 5.1 channels, and on up to 20 */
   uint8_t  nr_channels;
   uint8_t  unknown2;
   uint8_t zero[10];
@@ -943,6 +944,10 @@ typedef struct {
 } ATTRIBUTE_PACKED atsi_mat_t;
 #define ATSI_MAT_SIZE 672U
 
+/* One entry per title. A title holding two audio streams of the same length,
+ * a surround and a stereo mix for example, gets a primary and a secondary
+ * entry with the same title number, one with the top bit set and one without.
+ * The listener picks between them on the player */
 typedef struct {
   uint8_t  srp_index;         /* 1-based, top bit set marks the primary entry and clear the secondary */
   uint8_t  srp_flags;         /* varies per entry, purpose not established */
@@ -952,7 +957,11 @@ typedef struct {
 } ATTRIBUTE_PACKED atsi_title_index_t;
 #define ATSI_TITLE_INDEX_SIZE 8U
 
-/* one per audio program in the title (the ATS_PGI) */
+/* One per audio program in the title (the ATS_PGI).
+ *
+ * Start times do not run straight through a title. A program that raises the
+ * discontinuity bit starts a new timeline near zero, and one that does not
+ * carries on from the program before it and follows it with no gap. */
 typedef struct {
   uint8_t  prog_alloc_flags;      /* b7 the relation to the previous program, set
                                      on the first; b6 an STC discontinuity;
@@ -1058,6 +1067,9 @@ typedef struct {
  * An ASVU groups the still pictures (ASVs) that are loaded before the
  * matching audio program plays. Each ASV is one still I-picture with
  * optional sub-picture streams.
+ *
+ * A still belongs to a track and shows while it plays, either on a timer or
+ * stepped through by the listener.
  */
 
 /* general information for one Audio Still Video Unit */
