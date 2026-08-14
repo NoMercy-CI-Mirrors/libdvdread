@@ -65,7 +65,7 @@ CHECK_NAV_STRUCT_SIZE(dsi_t,        1017);
                 __FILE__, __LINE__, # arg );\
   }
 
-static void read_hli(hli_t *hli, unsigned char *buffer);
+static void read_hli(hli_t *hli, getbits_state_t *state);
 
 void navRead_PCI(pci_t *pci, unsigned char *buffer) {
   int32_t i;
@@ -124,7 +124,7 @@ void navRead_PCI(pci_t *pci, unsigned char *buffer) {
   for(i = 0; i < 9; i++)
     pci->nsml_agli.nsml_agl_dsta[i] = getbits(&state, 32 );
 
-  read_hli(&pci->hli, buffer + 96);
+  read_hli(&pci->hli, &state);
 
 #ifndef NDEBUG
   CHECK_VALUE(pci->pci_gi.zero1 == 0);
@@ -133,66 +133,66 @@ void navRead_PCI(pci_t *pci, unsigned char *buffer) {
 
 /* the still picture NAV packet, substream 0x02, has no PCI general information */
 void navRead_ASV_PCI(pci_t *pci, unsigned char *buffer) {
-  memset(pci, 0, sizeof(*pci));
-  read_hli(&pci->hli, buffer);
-}
-
-static void read_hli(hli_t *hli, unsigned char *buffer) {
-  int32_t i, j;
   getbits_state_t state;
   if (!getbits_init(&state, buffer)) abort();
+  memset(pci, 0, sizeof(*pci));
+  read_hli(&pci->hli, &state);
+}
+
+static void read_hli(hli_t *hli, getbits_state_t *state) {
+  int32_t i, j;
 
   /* pci hli hli_gi */
-  hli->hl_gi.hli_ss = getbits(&state, 16 );
-  hli->hl_gi.hli_s_ptm = getbits(&state, 32 );
-  hli->hl_gi.hli_e_ptm = getbits(&state, 32 );
-  hli->hl_gi.btn_se_e_ptm = getbits(&state, 32 );
-  hli->hl_gi.zero1 = getbits(&state, 2 );
-  hli->hl_gi.btngr_ns = getbits(&state, 2 );
-  hli->hl_gi.zero2 = getbits(&state, 1 );
-  hli->hl_gi.btngr1_dsp_ty = getbits(&state, 3 );
-  hli->hl_gi.zero3 = getbits(&state, 1 );
-  hli->hl_gi.btngr2_dsp_ty = getbits(&state, 3 );
-  hli->hl_gi.zero4 = getbits(&state, 1 );
-  hli->hl_gi.btngr3_dsp_ty = getbits(&state, 3 );
-  hli->hl_gi.btn_ofn = getbits(&state, 8 );
-  hli->hl_gi.btn_ns = getbits(&state, 8 );
-  hli->hl_gi.nsl_btn_ns = getbits(&state, 8 );
-  hli->hl_gi.zero5 = getbits(&state, 8 );
-  hli->hl_gi.fosl_btnn = getbits(&state, 8 );
-  hli->hl_gi.foac_btnn = getbits(&state, 8 );
+  hli->hl_gi.hli_ss = getbits(state, 16 );
+  hli->hl_gi.hli_s_ptm = getbits(state, 32 );
+  hli->hl_gi.hli_e_ptm = getbits(state, 32 );
+  hli->hl_gi.btn_se_e_ptm = getbits(state, 32 );
+  hli->hl_gi.zero1 = getbits(state, 2 );
+  hli->hl_gi.btngr_ns = getbits(state, 2 );
+  hli->hl_gi.zero2 = getbits(state, 1 );
+  hli->hl_gi.btngr1_dsp_ty = getbits(state, 3 );
+  hli->hl_gi.zero3 = getbits(state, 1 );
+  hli->hl_gi.btngr2_dsp_ty = getbits(state, 3 );
+  hli->hl_gi.zero4 = getbits(state, 1 );
+  hli->hl_gi.btngr3_dsp_ty = getbits(state, 3 );
+  hli->hl_gi.btn_ofn = getbits(state, 8 );
+  hli->hl_gi.btn_ns = getbits(state, 8 );
+  hli->hl_gi.nsl_btn_ns = getbits(state, 8 );
+  hli->hl_gi.zero5 = getbits(state, 8 );
+  hli->hl_gi.fosl_btnn = getbits(state, 8 );
+  hli->hl_gi.foac_btnn = getbits(state, 8 );
 
   /* pci hli btn_colit */
   for(i = 0; i < 3; i++)
     for(j = 0; j < 2; j++)
-      hli->btn_colit.btn_coli[i][j] = getbits(&state, 32 );
+      hli->btn_colit.btn_coli[i][j] = getbits(state, 32 );
 
   /* NOTE: I've had to change the structure from the disk layout to get
    * the packing to work with Sun's Forte C compiler. */
 
   /* pci hli btni */
   for(i = 0; i < 36; i++) {
-    hli->btnit[i].btn_coln = getbits(&state, 2 );
-    hli->btnit[i].x_start = getbits(&state, 10 );
-    hli->btnit[i].zero1 = getbits(&state, 2 );
-    hli->btnit[i].x_end = getbits(&state, 10 );
+    hli->btnit[i].btn_coln = getbits(state, 2 );
+    hli->btnit[i].x_start = getbits(state, 10 );
+    hli->btnit[i].zero1 = getbits(state, 2 );
+    hli->btnit[i].x_end = getbits(state, 10 );
 
-    hli->btnit[i].auto_action_mode = getbits(&state, 2 );
-    hli->btnit[i].y_start = getbits(&state, 10 );
-    hli->btnit[i].zero2 = getbits(&state, 2 );
-    hli->btnit[i].y_end = getbits(&state, 10 );
+    hli->btnit[i].auto_action_mode = getbits(state, 2 );
+    hli->btnit[i].y_start = getbits(state, 10 );
+    hli->btnit[i].zero2 = getbits(state, 2 );
+    hli->btnit[i].y_end = getbits(state, 10 );
 
-    hli->btnit[i].zero3 = getbits(&state, 2 );
-    hli->btnit[i].up = getbits(&state, 6 );
-    hli->btnit[i].zero4 = getbits(&state, 2 );
-    hli->btnit[i].down = getbits(&state, 6 );
-    hli->btnit[i].zero5 = getbits(&state, 2 );
-    hli->btnit[i].left = getbits(&state, 6 );
-    hli->btnit[i].zero6 = getbits(&state, 2 );
-    hli->btnit[i].right = getbits(&state, 6 );
+    hli->btnit[i].zero3 = getbits(state, 2 );
+    hli->btnit[i].up = getbits(state, 6 );
+    hli->btnit[i].zero4 = getbits(state, 2 );
+    hli->btnit[i].down = getbits(state, 6 );
+    hli->btnit[i].zero5 = getbits(state, 2 );
+    hli->btnit[i].left = getbits(state, 6 );
+    hli->btnit[i].zero6 = getbits(state, 2 );
+    hli->btnit[i].right = getbits(state, 6 );
     /* pci vm_cmd */
     for(j = 0; j < 8; j++)
-      hli->btnit[i].cmd.bytes[j] = getbits(&state, 8 );
+      hli->btnit[i].cmd.bytes[j] = getbits(state, 8 );
   }
 
 
