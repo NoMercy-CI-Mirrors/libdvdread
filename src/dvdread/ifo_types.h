@@ -550,7 +550,7 @@ typedef struct {
 typedef struct {
   char           samg_identifier[12];
   uint16_t       nr_chapters;
-  uint8_t        unknown_1;             /* 0, 1 or 2 seen, not the volume number */
+  uint8_t        unknown_1;             /* 0, 2 and 3 seen, not the volume number */
   uint8_t        specification_version; /* 0x12, a few discs write zero */
   samg_chapter_t *samg_chapters;
 } ATTRIBUTE_PACKED samg_mat_t;
@@ -622,7 +622,7 @@ typedef struct {
   uint8_t  zero_10[40];
   uint8_t  last_sector_audio_sys_space;
   uint8_t  zero_11[79];
-  uint8_t  menu_prescence_3; /* will be set to 0x01*/
+  uint8_t  menu_prescence_3; /* zero on every disc seen so far */
     /* XXX lots of padding after this to complete the sector*/
 } ATTRIBUTE_PACKED amgi_mat_t;
 #define AMGI_MAT_SIZE 337U
@@ -985,7 +985,8 @@ typedef struct {
 /* this will come after all of the track timstamps, a set of 12byte sector pointer records. One for each track*/
 typedef struct {
   uint8_t  cell_index;   /* 1-based, the first cell of a program is 0x01 */
-  uint8_t  cell_type;    /* 0x00 for an audio cell, other types not seen */
+  uint8_t  cell_type;    /* 0x00 on every disc seen; the patent names still,
+                            silent and audio cells but gives them no numbers */
   uint16_t reserved;     /* always 0x0000 */
   uint32_t start_sector; /* first sector, relative to the first AOB file */
   uint32_t end_sector;   /* last sector of the cell, relative to the first AOB file */
@@ -1021,8 +1022,11 @@ typedef struct {
   uint8_t  asv_number;     /* the still's number within its unit, restarting at 1 each unit */
   uint8_t  reserved;       /* always 0x00 */
   uint8_t  fosl_btnn;      /* number of the button selected first on a menu still */
-  uint8_t  track_nr;       /* on a shared slideshow, which track the still belongs to, unused when each track has its own stills */
-  uint32_t display_timing; /* when the still is shown, an MPEG PTS, 0 in browsable mode */
+  uint8_t  track_nr;       /* which track the still belongs to when programs share
+                              one range, 0 when each track has its own records */
+  uint32_t display_timing; /* when the still is shown, an MPEG PTS counted from the
+                              start of the track. A browsable program need not set
+                              it and some write the same value on every record */
   struct ATTRIBUTE_PACKED {
     uint8_t period : 4;    /* transition length */
     uint8_t mode   : 4;    /* transition effect */
